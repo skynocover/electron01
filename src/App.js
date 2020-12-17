@@ -22,13 +22,11 @@ function App() {
 
   const initialize = async () => {
     // let data = await appCtx.fetch('get', 'https://todo.skynocover.workers.dev');
-    let _index = 0;
-    let newData = data.map((item) => {
-      _index++;
-      setIndex(_index);
-      // setIndex((state) => state + 1);
-      return { key: _index, ...item };
+
+    let newData = data.map((item, index) => {
+      return { key: item.id, ...item };
     });
+    // setIndex(newData.length);
     setDataSource(newData);
   };
 
@@ -43,26 +41,23 @@ function App() {
     }),
   };
 
-  const newList = async (text) => {
-    setDataSource((state, props) => {
-      let _index = index + 1;
-      setIndex(_index);
-      // setIndex((state) => state + 1);
-      return [...state, { key: _index, name: text, complete: false }];
-    });
-  };
-
   const deleteList = async () => {
     let newList = dataSource.filter((item) => {
-      let check = false;
-      for (let i = 0; i < select.length; i++) {
-        if (select[i] == item.key) {
-          check = true;
-        }
+      if (!select.includes(item.key)) {
+        // await appCtx.fetch('delete', 'https://todo.skynocover.workers.dev', { name: text });
+        return true;
       }
-      return !check;
+      return false;
     });
     setDataSource(newList);
+  };
+
+  const newList = async (text) => {
+    setDataSource((state, props) => {
+      return [...state, { key: index + 1, name: text, complete: false }];
+    });
+    setIndex((state) => ++state);
+    await appCtx.fetch('put', 'https://todo.skynocover.workers.dev', { name: text });
   };
 
   const formik = useFormik({
@@ -87,9 +82,7 @@ function App() {
     {
       title: 'complete',
       align: 'center',
-      // dataIndex: 'completed',
       render: (item) => <antd.Radio checked={item.completed} />,
-      // key: 'address',
     },
   ];
 
