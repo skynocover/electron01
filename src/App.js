@@ -4,13 +4,17 @@ import './App.css';
 import * as antd from 'antd';
 import { AppContext } from './AppContext';
 import { useFormik } from 'formik';
+import { v1 as uuidv1 } from 'uuid';
+
+const url = 'http://localhost:9000';
+// const url = "https://todo.skynocover.workers.dev"
 
 function App() {
   const appCtx = React.useContext(AppContext);
 
   const [dataSource, setDataSource] = React.useState([]); //coulmns data
   const [select, setSelect] = React.useState([]); //coulmns data
-  const [index, setIndex] = React.useState(0); //coulmns data
+  const [message, setMessage] = React.useState(''); //coulmns data
 
   const data = [
     { id: 0, name: '30', completed: true },
@@ -21,10 +25,11 @@ function App() {
   ];
 
   const initialize = async () => {
-    // let data = await appCtx.fetch('get', 'https://todo.skynocover.workers.dev');
+    // let data = await appCtx.fetch('get', '');
+    let data = await appCtx.fetch('get', url);
 
     let newData = data.map((item, index) => {
-      return { key: item.id, ...item };
+      return { key: item.key, ...item };
     });
     // setIndex(newData.length);
     setDataSource(newData);
@@ -42,32 +47,48 @@ function App() {
   };
 
   const deleteList = async () => {
+    let keys = [];
     let newList = dataSource.filter((item) => {
       if (!select.includes(item.key)) {
-        // await appCtx.fetch('delete', 'https://todo.skynocover.workers.dev', { name: text });
         return true;
       }
+      keys.push(item.key);
       return false;
     });
+    await appCtx.fetch('delete', url, { keys });
     setDataSource(newList);
   };
 
   const newList = async (text) => {
+    let newitem = { key: uuidv1(), name: text, complete: false };
+
     setDataSource((state, props) => {
-      return [...state, { key: index + 1, name: text, complete: false }];
+      return [...state, newitem];
     });
-    setIndex((state) => ++state);
-    await appCtx.fetch('put', 'https://todo.skynocover.workers.dev', { name: text });
+
+    await appCtx.fetch('post', url, newitem);
+  };
+
+  const validate = (values) => {
+    const errors = {};
+
+    if (!values.text) {
+      setMessage('請至少輸入一個字');
+      errors.message = '請至少輸入一個字';
+    }
+
+    return errors;
   };
 
   const formik = useFormik({
     initialValues: {
       text: '',
     },
-    onSubmit: (values) => {
+    validate,
+    onSubmit: (values, action) => {
       // console.log(values);
+      action.resetForm();
       newList(values.text);
-      formik.resetForm();
     },
   });
 
@@ -85,6 +106,12 @@ function App() {
       render: (item) => <antd.Radio checked={item.completed} />,
     },
   ];
+
+  React.useEffect(() => {
+    if (message) {
+      antd.message.error(message);
+    }
+  }, [message]);
 
   React.useEffect(() => {
     initialize();
@@ -109,7 +136,7 @@ function App() {
         <div className="row ">
           <div className="col-md-3 col-lg-3 "></div>
           <div className="col-md-6 col-lg-6 col-sm-12">
-            <antd.Input placeholder="please input todo" onChange={formik.handleChange('text')} allowClear />
+            <antd.Input placeholder="please input todo" id="text" onChange={formik.handleChange('text')} allowClear />
           </div>
           <div className="col-md-3 col-lg-3 col-sm-6 justify-content-end">
             <antd.Button type="primary" onClick={formik.handleSubmit}>
