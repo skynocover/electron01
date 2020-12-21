@@ -2,7 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import * as antd from 'antd';
 
-axios.defaults.baseURL = '';
+axios.defaults.baseURL = '/';
+// const url = "https://todo.skynocover.workers.dev"
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 //axios.defaults.timeout = 5000;
 
