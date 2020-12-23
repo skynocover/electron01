@@ -195,15 +195,13 @@ let template = [
       {
         label: 'Learn More',
         click: function () {
-          electron.shell.openExternal('https://github.com/skynocover/electron01');
+          shell.openExternal('https://github.com/skynocover/electron01');
         },
       },
       {
         label: 'CloudFlare',
         click: function () {
-          electron.shell.openExternal(
-            'https://dash.cloudflare.com/c7f34060fc7e1530d72fcdafe6995359/workers/view/todolist',
-          );
+          shell.openExternal('https://dash.cloudflare.com/c7f34060fc7e1530d72fcdafe6995359/workers/view/todolist');
         },
       },
     ],
@@ -220,7 +218,6 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       nodeIntegration: false, // for webpack
-      preload: __dirname + '/preload.js',
       webSecurity: false,
       preload: path.join(__dirname, 'preload.js'),
     },
