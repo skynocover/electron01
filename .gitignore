@@ -26,3 +26,6 @@ yarn-error.log*
 /dist
 .eslintcache
 test.http
+src/tags
+.ctags
+tags

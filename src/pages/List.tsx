@@ -1,25 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import '../App.css';
 import * as antd from 'antd';
-import { AppContext } from './AppContext';
-import { useFormik } from 'formik';
+import { AppContext } from '../AppContext';
+import { FormikErrors, FormikValues, useFormik } from 'formik';
 import { v1 as uuidv1 } from 'uuid';
+import { ColumnsType } from 'antd/lib/table';
+import { TableRowSelection } from 'antd/lib/table/interface';
+
+declare global {
+  interface Window {
+    ipc: any;
+  }
+}
 
 const ipc = window.ipc;
 
 const url = '/aaa';
 
-function App() {
+const List = () => {
   const appCtx = React.useContext(AppContext);
 
-  const [dataSource, setDataSource] = React.useState([]); //coulmns data
-  const [select, setSelect] = React.useState([]); //coulmns data
+  interface todolist {
+    key: string;
+    name: string;
+    completed: boolean;
+  }
+
+  const [dataSource, setDataSource] = React.useState<todolist[]>([]); //coulmns data
+  const [select, setSelect] = React.useState<React.Key[]>([]); //coulmns data
 
   const initialize = async () => {
     let data = await appCtx.fetch('get', url);
 
-    let newData = data.map((item, index) => {
+    let newData = data.map((item: any, index: number) => {
       return { key: item.key, ...item };
     });
     setDataSource(newData);
@@ -30,12 +43,12 @@ function App() {
   }, []);
 
   // rowSelection object indicates the need for row selection
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
+  const rowSelection: TableRowSelection<object> = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: object[]) => {
       setSelect(selectedRowKeys);
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
-    getCheckboxProps: (record) => ({
+    getCheckboxProps: (record: any) => ({
       name: record.name,
     }),
   };
@@ -43,7 +56,7 @@ function App() {
   const deleteList = async () => {
     let result = await ipc.invoke('ask_delete');
     if (result === 0) {
-      let keys = [];
+      let keys: string[] = [];
       let newList = dataSource.filter((item) => {
         if (!select.includes(item.key)) {
           return true;
@@ -56,18 +69,18 @@ function App() {
     }
   };
 
-  const newList = async (text) => {
-    let newitem = { key: uuidv1(), name: text, complete: false };
+  const newList = async (text: string) => {
+    let newitem: todolist = { key: uuidv1(), name: text, completed: false };
 
-    setDataSource((state, props) => {
+    setDataSource((state: todolist[]) => {
       return [...state, newitem];
     });
 
     await appCtx.fetch('post', url, newitem);
   };
 
-  const completeList = async (key, value) => {
-    setDataSource((state, props) => {
+  const completeList = async (key: string, value: boolean) => {
+    setDataSource((state: todolist[]) => {
       let index = state.findIndex((element) => {
         return element.key == key;
       });
@@ -82,21 +95,19 @@ function App() {
     await appCtx.fetch('put', url, { key, completed: value });
   };
 
-  const validate = (values) => {
-    const errors = {};
-
-    if (!values.text) {
-      errors.text = '請至少輸入一個字';
-    }
-
-    return errors;
-  };
-
   const formik = useFormik({
     initialValues: {
       text: '',
     },
-    validate,
+    validate: (values: FormikValues) => {
+      const errors: FormikErrors<FormikValues> = {};
+
+      if (!values.text) {
+        errors.text = '請至少輸入一個字';
+      }
+
+      return errors;
+    },
     validateOnMount: true,
     onSubmit: (values) => {
       newList(values.text);
@@ -106,7 +117,7 @@ function App() {
 
   /////////////////////////
 
-  const columns = [
+  const columns: ColumnsType<object> = [
     {
       key: 'c1',
       title: '工作項目',
@@ -158,6 +169,14 @@ function App() {
           </div>
           <div className="col-md-3 col-lg-3 col-sm-6 justify-content-end">
             <antd.Popover
+              // content={
+              //   formik.errors.text ? (
+              //     <div>
+              //       <p> {formik.errors.text}</p>
+              //     </div>
+              //   ) : null
+              // }
+
               content={
                 formik.errors.text ? (
                   <div>
@@ -165,9 +184,16 @@ function App() {
                   </div>
                 ) : null
               }
-              // visible={formik.errors.text ? true : false}
+
+              // disable={formik.errors.text ==='' ? true : false}
             >
-              <antd.Button type="primary" disabled={!!formik.errors.text} onClick={formik.handleSubmit}>
+              <antd.Button
+                type="primary"
+                disabled={!!formik.errors.text}
+                onClick={() => {
+                  formik.handleSubmit();
+                }}
+              >
                 {'Send'}
               </antd.Button>
             </antd.Popover>
@@ -176,6 +202,6 @@ function App() {
       </div>
     </>
   );
-}
+};
 
-export default App;
+export default List;

@@ -7,9 +7,19 @@ axios.defaults.baseURL = '/';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 //axios.defaults.timeout = 5000;
 
-const AppContext = React.createContext({});
-const AppProvider = ({ children }) => {
-  const [modal, setModal] = React.useState(null);
+interface AppContextProps {
+  fetch: (method: 'get' | 'post' | 'delete' | 'put', url: string, param?: any) => Promise<any>;
+  setModal: (modal: React.ReactNode | null) => void;
+}
+
+const AppContext = React.createContext<AppContextProps>(undefined!);
+
+interface AppProviderProps {
+  children: React.ReactNode;
+}
+
+const AppProvider = ({ children }: AppProviderProps) => {
+  const [modal, setModal] = React.useState<React.ReactNode | null>(null);
 
   const initialize = async () => {};
 
@@ -19,7 +29,7 @@ const AppProvider = ({ children }) => {
 
   /////////////////////////////////////////////////////
 
-  const fetch = async (method, url, param) => {
+  const fetch = async (method: 'get' | 'post' | 'delete' | 'put', url: string, param?: any) => {
     // Send a POST request
     try {
       const response = await axios({
@@ -57,7 +67,7 @@ const AppProvider = ({ children }) => {
       value={{
         fetch,
 
-        setModal: (modal) => setModal(modal),
+        setModal: (modal: React.ReactNode | null) => setModal(modal),
       }}
     >
       <antd.Modal
