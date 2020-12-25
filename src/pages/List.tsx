@@ -139,6 +139,35 @@ const List = () => {
     },
   ];
 
+  const SendButton = () => {
+    return (
+      <>
+        {formik.errors.text ? (
+          <antd.Popover
+            content={
+              <div>
+                <p> {formik.errors.text}</p>
+              </div>
+            }
+          >
+            <antd.Button type="primary" disabled={true}>
+              {'Send'}
+            </antd.Button>
+          </antd.Popover>
+        ) : (
+          <antd.Button
+            type="primary"
+            onClick={() => {
+              formik.handleSubmit();
+            }}
+          >
+            {'Send'}
+          </antd.Button>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <div className="constainer m-3">
@@ -168,35 +197,7 @@ const List = () => {
             />
           </div>
           <div className="col-md-3 col-lg-3 col-sm-6 justify-content-end">
-            <antd.Popover
-              // content={
-              //   formik.errors.text ? (
-              //     <div>
-              //       <p> {formik.errors.text}</p>
-              //     </div>
-              //   ) : null
-              // }
-
-              content={
-                formik.errors.text ? (
-                  <div>
-                    <p> {formik.errors.text}</p>
-                  </div>
-                ) : null
-              }
-
-              // disable={formik.errors.text ==='' ? true : false}
-            >
-              <antd.Button
-                type="primary"
-                disabled={!!formik.errors.text}
-                onClick={() => {
-                  formik.handleSubmit();
-                }}
-              >
-                {'Send'}
-              </antd.Button>
-            </antd.Popover>
+            <SendButton />
           </div>
         </div>
       </div>
