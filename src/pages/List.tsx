@@ -6,6 +6,7 @@ import { FormikErrors, FormikValues, useFormik } from 'formik';
 import { v1 as uuidv1 } from 'uuid';
 import { ColumnsType } from 'antd/lib/table';
 import { TableRowSelection } from 'antd/lib/table/interface';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
 declare global {
   interface Window {
@@ -19,6 +20,7 @@ const url = '/aaa';
 
 const List = () => {
   const appCtx = React.useContext(AppContext);
+  const navigation = useNavigation();
 
   interface todolist {
     key: string;
@@ -176,6 +178,11 @@ const List = () => {
           <div className="col ">
             <antd.Button type="primary" onClick={deleteList}>
               刪除所選
+            </antd.Button>
+          </div>
+          <div className="col ">
+            <antd.Button type="primary" onClick={() => navigation.navigate('Test')}>
+              temp
             </antd.Button>
           </div>
         </div>

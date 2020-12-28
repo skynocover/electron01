@@ -4,8 +4,16 @@ import * as antd from 'antd';
 import { AppContext } from './AppContext';
 import { DesktopOutlined, PieChartOutlined, FileOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import List from './pages/List';
+import Test from './pages/Test';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { TransitionPresets } from '@react-navigation/stack';
+
 const { Header, Content, Footer, Sider } = antd.Layout;
 const { SubMenu } = antd.Menu;
+
+const Stack = createStackNavigator();
 
 function App() {
   const appCtx = React.useContext(AppContext);
@@ -16,6 +24,41 @@ function App() {
     console.log(collapsed);
     setCollapsed(collapsed);
   };
+
+  const pages = [
+    { name: 'List', component: List, options: {} },
+    { name: 'Test', component: Test, options: { ...TransitionPresets.ModalPresentationIOS } },
+  ];
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'stretch',
+        width: '100vw',
+        height: '100vh',
+      }}
+    >
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="List"
+          screenOptions={{
+            title: 'app',
+            animationEnabled: true,
+            // headerShown: false,
+            gestureEnabled: true,
+            cardOverlayEnabled: true,
+          }}
+        >
+          {pages.map((item) => (
+            <Stack.Screen key={item.name} name={item.name} component={item.component} options={item.options} />
+          ))}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </div>
+  );
 
   return (
     <>

@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import * as antd from 'antd';
 import { AppContext } from '../AppContext';
 import { CalendarMode } from 'antd/lib/calendar/generateCalendar';
