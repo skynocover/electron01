@@ -10,6 +10,8 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 interface AppContextProps {
   fetch: (method: 'get' | 'post' | 'delete' | 'put', url: string, param?: any) => Promise<any>;
   setModal: (modal: React.ReactNode | null) => void;
+  collapsed: boolean;
+  onCollapse: (collapsed: boolean) => void;
 }
 
 const AppContext = React.createContext<AppContextProps>(undefined!);
@@ -20,6 +22,12 @@ interface AppProviderProps {
 
 const AppProvider = ({ children }: AppProviderProps) => {
   const [modal, setModal] = React.useState<React.ReactNode | null>(null);
+  const [collapsed, setCollapsed] = React.useState<boolean>(false);
+
+  const onCollapse = (collapsed: boolean) => {
+    console.log(collapsed);
+    setCollapsed(collapsed);
+  };
 
   const initialize = async () => {};
 
@@ -39,15 +47,6 @@ const AppProvider = ({ children }: AppProviderProps) => {
       });
 
       if (response) {
-        // console.log('resp: ' + JSON.stringify(response.data));
-        // if (response.data.errorCode === 999999) {
-        //   // window.location.href = loginPage;
-        //   throw new Error('登入超時');
-        // } else if (response.data.errorCode !== 0) {
-        //   throw new Error(response.errorMessage);
-        // }
-        // window.alert(JSON.stringify(response));
-
         return response.data;
       } else {
         throw new Error('Response fail');
@@ -68,6 +67,8 @@ const AppProvider = ({ children }: AppProviderProps) => {
         fetch,
 
         setModal: (modal: React.ReactNode | null) => setModal(modal),
+        collapsed,
+        onCollapse,
       }}
     >
       <antd.Modal

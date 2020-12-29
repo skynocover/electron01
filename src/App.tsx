@@ -18,13 +18,6 @@ const Stack = createStackNavigator();
 function App() {
   const appCtx = React.useContext(AppContext);
 
-  const [collapsed, setCollapsed] = React.useState<boolean>(false);
-
-  const onCollapse = (collapsed: boolean) => {
-    console.log(collapsed);
-    setCollapsed(collapsed);
-  };
-
   const pages = [
     { name: 'List', component: List, options: {} },
     { name: 'Test', component: Test, options: { ...TransitionPresets.ModalPresentationIOS } },
@@ -47,7 +40,7 @@ function App() {
           screenOptions={{
             title: 'app',
             animationEnabled: true,
-            // headerShown: false,
+            headerShown: false,
             gestureEnabled: true,
             cardOverlayEnabled: true,
           }}
@@ -59,7 +52,7 @@ function App() {
       </NavigationContainer>
     </div>
   );
-
+  /*
   return (
     <>
       <antd.Layout style={{ minHeight: '100vh' }}>
@@ -80,7 +73,6 @@ function App() {
           </antd.Menu>
         </Sider>
         <antd.Layout className="site-layout" style={{ minHeight: '100vh' }}>
-          {/* <Header className="site-layout-background" style={{ padding: 0 }} /> */}
           <Content style={{ margin: '0 16px' }}>
             <List />
           </Content>
@@ -89,6 +81,7 @@ function App() {
       </antd.Layout>
     </>
   );
+  */
 }
 
 export default App;

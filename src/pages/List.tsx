@@ -6,7 +6,12 @@ import { FormikErrors, FormikValues, useFormik } from 'formik';
 import { v1 as uuidv1 } from 'uuid';
 import { ColumnsType } from 'antd/lib/table';
 import { TableRowSelection } from 'antd/lib/table/interface';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+// import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+
+import SideBar from '../components/sidebar';
+
+const { Header, Content, Footer, Sider } = antd.Layout;
+const { SubMenu } = antd.Menu;
 
 declare global {
   interface Window {
@@ -20,7 +25,6 @@ const url = '/aaa';
 
 const List = () => {
   const appCtx = React.useContext(AppContext);
-  const navigation = useNavigation();
 
   interface todolist {
     key: string;
@@ -172,42 +176,53 @@ const List = () => {
 
   return (
     <>
-      <div className="constainer m-3">
-        <div className="row justify-content-center m-2">
-          <div className="col-md-2 col-lg-3 "></div>
-          <div className="col ">
-            <antd.Button type="primary" onClick={deleteList}>
-              刪除所選
-            </antd.Button>
-          </div>
-          <div className="col ">
-            <antd.Button type="primary" onClick={() => navigation.navigate('Test')}>
-              temp
-            </antd.Button>
-          </div>
-        </div>
+      <antd.Layout style={{ minHeight: '100vh' }}>
+        <SideBar />
+        <antd.Layout className="site-layout" style={{ minHeight: '100vh' }}>
+          <Content style={{ margin: '0 16px' }}>
+            <div className="constainer m-3">
+              <div className="row justify-content-center m-2">
+                <div className="col-md-2 col-lg-3 "></div>
+                <div className="col ">
+                  <antd.Button type="primary" onClick={deleteList}>
+                    刪除所選
+                  </antd.Button>
+                </div>
+                <div className="col ">
+                  <antd.Button type="primary">temp</antd.Button>
+                </div>
+              </div>
 
-        <div className="row justify-content-center">
-          <div className="col-md-8 col-lg-6">
-            <antd.Table rowSelection={rowSelection} dataSource={dataSource} columns={columns} pagination={false} />
-          </div>
-        </div>
-        <antd.Divider />
-        <div className="row ">
-          <div className="col-md-3 col-lg-3 "></div>
-          <div className="col-md-6 col-lg-6 col-sm-12">
-            <antd.Input
-              placeholder="please input todo"
-              value={formik.values.text}
-              onChange={formik.handleChange('text')}
-              allowClear
-            />
-          </div>
-          <div className="col-md-3 col-lg-3 col-sm-6 justify-content-end">
-            <SendButton />
-          </div>
-        </div>
-      </div>
+              <div className="row justify-content-center">
+                <div className="col-md-8 col-lg-6">
+                  <antd.Table
+                    rowSelection={rowSelection}
+                    dataSource={dataSource}
+                    columns={columns}
+                    pagination={false}
+                  />
+                </div>
+              </div>
+              <antd.Divider />
+              <div className="row ">
+                <div className="col-md-3 col-lg-3 "></div>
+                <div className="col-md-6 col-lg-6 col-sm-12">
+                  <antd.Input
+                    placeholder="please input todo"
+                    value={formik.values.text}
+                    onChange={formik.handleChange('text')}
+                    allowClear
+                  />
+                </div>
+                <div className="col-md-3 col-lg-3 col-sm-6 justify-content-end">
+                  <SendButton />
+                </div>
+              </div>
+            </div>
+          </Content>
+          <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+        </antd.Layout>
+      </antd.Layout>
     </>
   );
 };
